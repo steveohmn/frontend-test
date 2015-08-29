@@ -28,11 +28,14 @@ function sendUnauthorized(response) {
 }
 
 app.post('/login', function(request, response) {
+    console.log(request.body);
     var user = request.body.user;
     if (users[user] === undefined) {
+        console.log("Wrong username: " + user)
         return sendUnauthorized(response);
     }
     if (users[user] !== request.body.password) {
+        console.log("Wrong password: " + request.body.password)
         return sendUnauthorized(response);
     }
     response.cookie('login', user);
