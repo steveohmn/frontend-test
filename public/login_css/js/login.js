@@ -1,11 +1,10 @@
  $("#login-button").click(function(event){
+ 	// prevent default action
 	event.preventDefault();
 
 	var username = $("#username").val();
 	var password = $("#password").val();
 	var data = {'user':username,'password':password};
-
-	//var response = '';
 
 	$.ajax({
        url: 'http://localhost:8888/login',
@@ -24,7 +23,7 @@
 
        			setTimeout(function() {
        				window.open('http://localhost:8888/main.html?'+'user='+username, '_self', false);
-       			}, 3000);
+       			}, 2000);
        		}
        		
        },

@@ -3,16 +3,42 @@
 
 <head>
 
-  <title>Phone Book</title>
+  <title>Main webpage</title>
+
+  <!-- Stylesheet linker to Ek Mukta Font -->
+  <link rel="stylesheet" type="text/css" href="/main.css">
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ek+Mukta">
+
+  <!-- Script linker-->
+	<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+  	<script src="main.js"></script>
 
 </head>
 
 <body>
 
-  <h1 id="header"></h1>
+  <h1>
+  	<div id="header">Welcome, </div>
+  	<button type="submit" id="logout" onclick="logoutClick();">Logout</button>  
+  </h1>
 
-  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-  <script src="main.js"></script>
+  <div class="menu-wrap">
+    <nav class="menu">
+        <ul class="clearfix">
+            <li id="home" class="current-item"><a onclick="homeClick();" href="#">Home</a></li>
+            <li id="states"><a onclick="stateClick();" href="#">States</a></li>
+            <li id="msgs"><a onclick="msgClick();" href="#">Messages</a></li>
+        </ul>
+    </nav>
+  </div>
+
+  <div id="main-body">
+  </div>
+
+  <p>
+  <div id="state_info">
+  </div>
+  </p>
 
 </body>
 </html>
