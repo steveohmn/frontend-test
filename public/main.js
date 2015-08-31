@@ -33,7 +33,8 @@ function logoutClick() {
        		// wait for three seconds until you move on to the next page
        		if(data["result"] == true)
        		{
-       			alert("logout successful!");
+       			var real_userName = capFirstLetter(userName);
+       			alert("Good Bye, " + real_userName + ".");
        			setTimeout(function() {
        				window.open('http://localhost:8888/login.html','_self', false);
        			}, 500);
