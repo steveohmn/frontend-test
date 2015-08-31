@@ -1,10 +1,24 @@
+// run AJAX request first before document is even loaded
+// Logged username is obtained first before document is ready
 
-// when the document is loaded, get the username on top of the webpage!
-$(document).ready(function() {
-	// get the username to display on the header
-	var userName = getUrlVars()['user'];
-	var real_userName = capFirstLetter(userName);
-	$("#header").append(real_userName +"!");
+var userName;	// logged user
+
+$.ajax({
+  	url: 'http://localhost:8888/secret',
+  	type: 'GET',
+  	success: function(data)
+    {
+    	$(document).ready(function() {
+			userName = data['user'];
+			var real_userName = capFirstLetter(userName);
+			$("#header").append(real_userName +"!");
+    	});
+    	
+    },
+    error: function(jqXHR, textStatus, errorThrown)
+    {
+   		alert("Failed to get logged in username");
+    }
 });
 
 function logoutClick() {
@@ -47,6 +61,7 @@ function bodyEraser(id) {
 	}
 }
 
+// function when clicked on Home menu
 function homeClick() {
 
 	if ($("#home").hasClass("current-item") == false)
@@ -60,6 +75,7 @@ function homeClick() {
 	}
 }
 
+// function when clicked on State menu
 function stateClick() {
 
 	if ($("#states").hasClass("current-item") == false)
@@ -121,19 +137,6 @@ function stateClick() {
 	}
 }
 
-function msgClick() {
-
-	if ($("#msgs").hasClass("current-item") == false)
-	{
-		// add class to $("#msgs"), delete for others
-		$("#home").removeClass();
-		$("#states").removeClass();
-		$("#msgs").addClass("current-item");
-
-		showDiv("msg_info");
-	}
-}
-
 function displayStateInfo() {
   var stateVal = $( "#stateList" ).val();
   
@@ -143,19 +146,14 @@ function displayStateInfo() {
   	type: 'GET',
   	success: function(data)
     {
-   		$.when( eachStateInfo(data) )
-   		 .done(
-   		 	function()
-   		 	{
-   		 		
-   		 	}
-   		 );
+    	// get each state's data
+    	eachStateInfo(data);
     },
     error: function(jqXHR, textStatus, errorThrown)
     {
    		alert("Failed to load state's data!");
     }
-  })
+  });
 }
 
 function eachStateInfo(json) {
@@ -183,6 +181,264 @@ function eachStateInfo(json) {
 	$("#state_detail").append('Daylight Saving Time? ' + json['dst']);
 }
 
+// function when clicked on Messages menu
+function msgClick() {
+
+	if ($("#msgs").hasClass("current-item") == false)
+	{
+		// add class to $("#msgs"), delete for others
+		$("#home").removeClass();
+		$("#states").removeClass();
+		$("#msgs").addClass("current-item");
+
+		showDiv("msg_info");
+	}
+
+	// get the msg_info div box
+	var msgDiv = document.getElementById('msg_info');
+
+	// check if msg_left box present; if not, create one
+	if (document.getElementById('msg_left') === null)
+	{
+		// create msg_left div box
+		var msg_left = document.createElement('div');
+		msg_left.id = "msg_left";
+		msg_left.style = "width: 40%; float:left";
+
+		// create message show buttons
+		createMsgButtons(msg_left);
+
+		// append msg_left div as a child of msg_info
+		msgDiv.appendChild(msg_left);
+
+	}
+
+	// check if msg_to_add box is present; if not, create one
+	if (document.getElementById('msg_to_add') === null)
+	{
+		// create msg_to_add div box
+		var msg_to_add = document.createElement('div');
+		msg_to_add.id = "msg_to_add";
+		msg_to_add.style = "width: 60%; float:right";
+
+		// create field form for message add feature
+		createMsgAddFeature(msg_to_add);
+
+		// append msg_to_add as a child of msg_info
+		msgDiv.appendChild(msg_to_add);
+	}
+
+}
+
+function createMsgButtons(msg_left) {
+
+	// button for showing all messages
+	var button1 = document.createElement('button');
+	button1.setAttribute("type", "submit");
+	button1.setAttribute("id", "allMsgs");
+	button1.setAttribute("onclick", "allMsgs();");
+	button1.innerHTML = "All messages";
+
+	// button for showing my messages only
+	var button2 = document.createElement('button');
+	button2.setAttribute("type", "submit");
+	button2.setAttribute("id", "myMsgs");
+	button2.setAttribute("onclick", "myMsgs();");
+	button2.innerHTML = "My messages";
+
+	// button for showing my secret messages
+	var button3 = document.createElement('button');
+	button3.setAttribute("type", "submit");
+	button3.setAttribute("id", "mySecretMsgs");
+	button3.setAttribute("onclick", "mySecretMsgs();");
+	button3.innerHTML = "My secret messages";
+
+	// empty div with id = "msg_show" to 
+	var msg = document.createElement('div');
+	msg.id = "msg_show";
+
+	// append them as children of msg_left
+	msg_left.appendChild(button1);
+	msg_left.appendChild(button2);
+	msg_left.appendChild(button3);
+	msg_left.appendChild(document.createElement('p'));	// indent
+	msg_left.appendChild(msg);
+}
+
+function allMsgs() {
+	// get all messages left using AJAX GET request
+	$.ajax({
+	  	url: 'http://localhost:8888/read',
+	  	type: 'GET',
+	  	success: function(data)
+	    {
+	    	// data is an array of JSON objects
+	    	/* 
+	    		[
+	    			{"user": USER1, "phone": xxx xxx xxxx, "message": MESSAGE},
+					{"user": USER2, "phone": xxx xxx xxxx, "message": MESSAGE},
+					...
+				]
+	    	*/
+
+	    	// clear msg_show div in order to fill it up with ALL Messages
+	    	document.getElementById("msg_show").innerHTML = "";
+
+	    	var msg_string = "";
+	    	for (var i = 0; i < data.length; i++) {
+	    		msg_string += "User: " + data[i]["user"] 
+	    				    + "<br>Phone #: " + data[i]["phone"]
+	    				    + "<br>Message: " + data[i]["message"];
+	    		msg_string += "<br><br>";
+	    	}
+
+	    	// display it in HTML
+		    msg_show.innerHTML = msg_string;
+	    },
+	    error: function(jqXHR, textStatus, errorThrown)
+	    {
+	   		alert("Failed to load message(s) left!");
+	    }
+	});
+}
+
+function myMsgs() {
+	// get my specific messages left using AJAX GET request
+	$.ajax({
+	  	url: 'http://localhost:8888/read',
+	  	type: 'GET',
+	  	success: function(data)
+	    {
+	    	// data is an array of JSON objects
+	    	/* 
+	    		[
+	    			{"user": USER1, "phone": xxx xxx xxxx, "message": MESSAGE},
+					{"user": USER2, "phone": xxx xxx xxxx, "message": MESSAGE},
+					...
+				]
+	    	*/
+
+	    	// clear msg_show div in order to fill it up with ALL Messages
+	    	document.getElementById("msg_show").innerHTML = "";
+
+	    	var msg_string = "<h2>My messages: </h2>";
+
+	    	var count = 0;
+	    	for (var i = 0; i < data.length; i++) {
+
+	    		if (userName == data[i]["user"]) {
+		    		msg_string += "Phone #: " + data[i]["phone"]
+		    				    + "<br>Message: " + data[i]["message"];
+		    		msg_string += "<br><br>";
+		    		count++;
+		    	}
+	    	}
+
+	    	if ( count == 0) {
+	    		msg_string += "None";
+	    	}
+		    
+		    // display it in HTML
+		    msg_show.innerHTML = msg_string;
+		    	
+	    },
+	    error: function(jqXHR, textStatus, errorThrown)
+	    {
+	   		alert("Failed to load message(s) left!");
+	    }
+	});
+}
+
+function mySecretMsgs() {
+	// get my secret messages left using AJAX GET request
+	$.ajax({
+	  	url: 'http://localhost:8888/secret',
+	  	type: 'GET',
+	  	success: function(data)
+	    {
+	    	// clear msg_show div in order to fill it up with ALL Messages
+	    	document.getElementById("msg_show").innerHTML = "";
+
+	    	var msg_string = "";
+
+    		msg_string += "Secret Message: " + data["message"];
+    		msg_string += "<br><br>";
+
+	    	// display it in HTML
+		    msg_show.innerHTML = msg_string;
+		    	
+	    },
+	    error: function(jqXHR, textStatus, errorThrown)
+	    {
+	   		alert("Failed to load message(s) left!");
+	    }
+	});
+}
+
+function createMsgAddFeature(msg_to_add) {
+
+	// create phone number field
+	var phoneField = document.createElement('input');
+	phoneField.setAttribute("id", "phoneNum");
+	phoneField.setAttribute("type", "text");
+	phoneField.setAttribute("size", "15");
+	phoneField.setAttribute("placeholder", "Phone #: xxx xxx xxxx");
+	phoneField.innerHTML = "Enter Phone #: ";
+
+	// create message field
+	var msgField = document.createElement('textarea');
+	msgField.setAttribute("id", "msgLeft");
+	msgField.setAttribute("type", "text");
+	msgField.setAttribute("placeholder", "Leave your message here..");
+	msgField.setAttribute("rows", "7");
+	msgField.setAttribute("cols", "40");
+
+	// create submit button
+	var submitButton = document.createElement('button');
+	submitButton.setAttribute("type", "submit");
+	submitButton.setAttribute("id", "leaveMsgButton");
+	submitButton.setAttribute("onclick", "leaveMsg();");
+	submitButton.innerHTML = "Submit";
+
+	// add all these feature to msg_to_add
+	msg_to_add.appendChild(phoneField);
+	msg_to_add.appendChild(document.createElement('p'));	// indent
+	msg_to_add.appendChild(msgField);
+	msg_to_add.appendChild(document.createElement('p'));	// indent
+	msg_to_add.appendChild(submitButton);
+
+}
+
+function leaveMsg() {
+
+	var phoneNum = $("#phoneNum").val();
+	phoneNum = phoneNum == "" ? undefined : phoneNum;
+	var msg = $("#msgLeft").val();
+	msg = msg == "" ? undefined : msg;
+	var json = {'phone':phoneNum,'message':msg};
+
+	// POST my message
+	$.ajax({
+	  	url: 'http://localhost:8888/write',
+	  	type: 'POST',
+	  	contentType:'application/json',
+	  	data: JSON.stringify(json),
+	  	dataType:'json',
+	  	success: function(data)
+	    {
+	    	alert("Message Left!");
+		    	
+	    },
+	    error: function(jqXHR, textStatus, errorThrown)
+	    {
+	    	if (jqXHR['status'] == 401)
+	   			alert("User, " + userName + ", is not logged on!");
+	   		else if (jqXHR['status'] == 400)
+	   			alert("Bad request!");
+	    }
+	});
+}
+
 function commaEmplacer(str) {
 	var new_str = "";
 	var len = str.length;
@@ -198,20 +454,6 @@ function commaEmplacer(str) {
 	}
 
 	return new_str;
-}
-
-// Read a page's URL query variables and return them as an associative array.
-function getUrlVars()
-{
-    var vars = [], hash;
-    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-    for(var i = 0; i < hashes.length; i++)
-    {
-        hash = hashes[i].split('=');
-        vars.push(hash[0]);
-        vars[hash[0]] = hash[1];
-    }
-    return vars;
 }
 
 function capFirstLetter(name)

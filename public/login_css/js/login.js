@@ -22,7 +22,7 @@
        			$('.wrapper').addClass('form-success');
 
        			setTimeout(function() {
-       				window.open('http://localhost:8888/main.html?'+'user='+username, '_self', false);
+       				window.open('http://localhost:8888/main.html', '_self', false);
        			}, 2000);
        		}
        		
