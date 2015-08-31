@@ -434,7 +434,7 @@ function leaveMsg() {
 	    	if (jqXHR['status'] == 401)
 	   			alert("User, " + userName + ", is not logged on!");
 	   		else if (jqXHR['status'] == 400)
-	   			alert("Bad request!");
+	   			alert("You must enter both phone number and message fields!");
 	    }
 	});
 }
