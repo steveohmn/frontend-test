@@ -24,9 +24,20 @@ function logoutClick() {
        				window.open('http://localhost:8888/login.html','_self', false);
        			}, 500);
        		}
-       		
        }
 	});
+}
+
+function showDiv(id) {
+
+	var arr = ["main-body", "state_info", "msg_info"];
+
+	for (var i = 0; i < arr.length ; i++) {
+		if (arr[i] == id)
+			$("#"+arr[i]).show();
+		else
+			$("#"+arr[i]).hide();
+	}
 }
 
 function bodyEraser(id) {
@@ -45,7 +56,7 @@ function homeClick() {
 		$("#msgs").removeClass();
 		$("#home").addClass("current-item");
 
-		bodyEraser("main-body");
+		showDiv("main-body");
 	}
 }
 
@@ -58,20 +69,26 @@ function stateClick() {
 		$("#msgs").removeClass();
 		$("#states").addClass("current-item");
 
-		bodyEraser("main-body");
+		showDiv("state_info");
 	}
 
 	// if the dropdown is not present,
 	// create a new div and generate a dropdown menu for states
 	if (document.getElementById('dropdown') === null)
 	{
+		// get the state_info div box
+		var stateDiv = document.getElementById('state_info');
+
 		// create listbox Object
 		var div = document.createElement('div');
 		div.id = 'dropdown';
 		div.innerHTML = "<h2>States browser</h2>" + "<p>";
 
-		document.getElementById("main-body").appendChild(div);
-
+		if (stateDiv.firstChild)
+			stateDiv.insertBefore(div, stateDiv.firstChild);
+		else
+			stateDiv.appendChild(div);
+		
 		// create dropdown box
 		var select = document.createElement('select');
 		select.id = 'stateList';
@@ -113,7 +130,7 @@ function msgClick() {
 		$("#states").removeClass();
 		$("#msgs").addClass("current-item");
 
-		bodyEraser("main-body");
+		showDiv("msg_info");
 	}
 }
 
@@ -126,35 +143,44 @@ function displayStateInfo() {
   	type: 'GET',
   	success: function(data)
     {
-   		eachStateInfo(data);
+   		$.when( eachStateInfo(data) )
+   		 .done(
+   		 	function()
+   		 	{
+   		 		
+   		 	}
+   		 );
     },
     error: function(jqXHR, textStatus, errorThrown)
     {
    		alert("Failed to load state's data!");
     }
-  });
+  })
 }
 
 function eachStateInfo(json) {
 	// erase the state_info div
-	bodyEraser("state_info");
+	bodyEraser("state_detail");
 
-	$("#state_info").append(json['name']);
-	$("#state_info").append(', ' + json['abbreviation'] + '<br>');
-	$("#state_info").append('Capital: ' + json['capital'] + '<br>');
+	// div of state_info will display each state information
+	// based on the JSON object received
+	$("#state_detail").append(json['name']);
+	$("#state_detail").append(', ' + json['abbreviation'] + '<br>');
+	$("#state_detail").append('Capital: ' + json['capital'] + '<br>');
 
+	// add commas for better visibility
 	var population = commaEmplacer(JSON.stringify(json['population']));
 	var sq_miles = commaEmplacer(JSON.stringify(json['square-miles']));
 
-	$("#state_info").append('Most populous city: ' + json['most-populous-city'] + '<br>');
-	$("#state_info").append('Population: ' + population + '<br>');
-	$("#state_info").append('Size of the state: ' + sq_miles + ' (miles)^2<br>');
-	$("#state_info").append('Timezone 1: ' + json['time-zone-1'] + '<br>');
+	$("#state_detail").append('Most populous city: ' + json['most-populous-city'] + '<br>');
+	$("#state_detail").append('Population: ' + population + '<br>');
+	$("#state_detail").append('Size of the state: ' + sq_miles + ' (miles)^2<br>');
+	$("#state_detail").append('Timezone 1: ' + json['time-zone-1'] + '<br>');
 	if (json['time-zone-2'] !== "")
 	{
-		$("#state_info").append('Timezone 2: ' + json['time-zone-2'] + '<br>');
+		$("#state_detail").append('Timezone 2: ' + json['time-zone-2'] + '<br>');
 	}
-	$("#state_info").append('Daylight Saving Time? ' + json['dst']);
+	$("#state_detail").append('Daylight Saving Time? ' + json['dst']);
 }
 
 function commaEmplacer(str) {
