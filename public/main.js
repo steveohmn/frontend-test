@@ -285,7 +285,8 @@ function allMsgs() {
 	    	// clear msg_show div in order to fill it up with ALL Messages
 	    	document.getElementById("msg_show").innerHTML = "";
 
-	    	var msg_string = "";
+	    	var msg_string = "<h2>All messages: </h2>";
+
 	    	for (var i = 0; i < data.length; i++) {
 	    		msg_string += "User: " + data[i]["user"] 
 	    				    + "<br>Phone #: " + data[i]["phone"]
@@ -360,10 +361,9 @@ function mySecretMsgs() {
 	    	// clear msg_show div in order to fill it up with ALL Messages
 	    	document.getElementById("msg_show").innerHTML = "";
 
-	    	var msg_string = "";
+	    	var msg_string = "<h2>Secret messages: </h2>";
 
-    		msg_string += "Secret Message: " + data["message"];
-    		msg_string += "<br><br>";
+    		msg_string += data["message"];
 
 	    	// display it in HTML
 		    msg_show.innerHTML = msg_string;
@@ -427,8 +427,9 @@ function leaveMsg() {
 	  	dataType:'json',
 	  	success: function(data)
 	    {
+	    	$("#phoneNum").val('');
+		    $("#msgLeft").val('');
 	    	alert("Message Left!");
-		    	
 	    },
 	    error: function(jqXHR, textStatus, errorThrown)
 	    {

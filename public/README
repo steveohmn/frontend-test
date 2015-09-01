@@ -1,0 +1,62 @@
+What URL should be used to access your application?
+	http://localhost:8888/login.html
+
+What libraries did you use to write your application?
+	I used JQuery, CSS template from online to write my application.
+	The overall design of the Login page and main page were adopted from CSS template
+	that I found online. Majority of javascript was handled using this template.
+
+What influenced the design of your user interface?
+	I drew a big picture of what the requirements were. Then by walking through these requirements, I
+	designed my user interface based on what needed to be implemented. 
+	
+	First, login page was needed in order to determine whether the particular user information
+	is in the database. I thought it was a good idea to have a welcome screen when the user first
+	accesses my application. After sending AJAX POST request of the username and password, I determine
+	whether that user is authorized to access the application and if he/she is in the system, move on
+	to the main page.
+
+	The main page only needed two big implementations: States browsing, and guest book message browsing.
+	I thought it would be convenient for the user to have tab menus near the top of the webpage and 
+	have him choose what he wants to do.
+
+	To browse information of each state, the user can use the dropdown
+	menu in order to browse what state he wants to know more about, and when he clicks on CA, for example,
+	capital, population, size of the state and more about California will be displayed.
+
+	The guest book message page has two columns. First column has three buttons where the user can view 
+	all messages, his own messages, and secret message in the guest book. The second column allows the user
+	to add his own message to the guest book. If either guest number or the message is not entered, it will
+	fire an error.
+
+What steps did you take to make your application user friendly?
+	Most importantly, I kept thinking that I'm a customer of this application. What would be an ideal design
+	that will help me use this program without much difficulty? I also looked at the other company websites
+	and found how they showcased their products. Majority of them had tabs that helped me navigate through
+	the details that their potential consumers might want to know more about such as why our product, products,
+	solutions, documentation, support and many more.
+
+	Therefore, I thought it would be very conventional to adopt their designs and help the users with ease of use
+	when it comes to actually delivering this application as a business product.
+
+What steps did you take to insure your application was secure?
+	First of all, javascript is known to be signle-threaded in all modern browsers. Sometimes, when the developer does 
+	not design the overall architecture of the website in a smart way, various synchronization errors can break the 
+	entire flow of the website.
+
+	I tried to make each task within the application as modular as possible, writing a general function if it is used
+	several times by the user. Each element in HTML has its own purpose of existence and I tried to make every
+	element in login.html and main.html independent from other elements unless they are required to be dependent.
+	As it is reflected in main.js, there are many functions written in this file that are served to carry out their own
+	actions. This way, when one function fails due to some code injection or hacking, other functionalities remain stable.
+
+What could be done to the front end or back end to make it more secure?
+	Rather than a single-page application, a multiple-page application can be created in order to reduce the load on
+	one HTML file and possibly prevent the front-end from exposing entire information to an outside user.
+
+	For back-end, NodeJS could have another database node like MySQL where it can retrieve all users' messages.
+	Currently, all messages that are added by the user are appended to the JSON object stored inside NodeJS.
+	This can expose all of the users' guest book information to a potential hacker. All he needs to do is get an access
+	of NodeJS server running on server.js. Moreover, username and password are stored directly inside NodeJS, which is
+	also insecure. All of the user information can be vandalized by a hacker and even the root access of the current
+	server can be available. 
